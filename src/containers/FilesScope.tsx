@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { configureStore, IFilesStore } from '../configureStore';
 import { Fabric } from 'office-ui-fabric-react';
 
-export class FilesDataSource extends React.Component<{}, {}> {
+export class FilesScope extends React.Component<{}, {}> {
   private _store: Store<IFilesStore>;
 
   constructor() {

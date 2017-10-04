@@ -3,7 +3,7 @@ import * as React from 'react';
 import {
   FilesBreadcrumb,
   FilesCommandBar,
-  FilesDataSource,
+  FilesScope,
   FilesView
 } from './containers';
 
@@ -28,21 +28,12 @@ class App extends React.Component {
     return (
       <div className="App">
 
-        <FilesDataSource>
-
+        <FilesScope>
           <FilesCommandBar />
           <FilesBreadcrumb />
           <FilesView />
           <DevTools />
-        </FilesDataSource>
-
-        <FilesDataSource>
-
-          <FilesCommandBar />
-          <FilesBreadcrumb />
-          <FilesView />
-          <DevTools />
-        </FilesDataSource>
+        </FilesScope>
 
       </div>
     );

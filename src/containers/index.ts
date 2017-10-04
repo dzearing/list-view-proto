@@ -1,4 +1,4 @@
 export * from './FilesBreadcrumb';
-export * from './FilesDataSource';
+export * from './FilesScope';
 export * from './FilesView';
 export * from './FilesCommandBar';
