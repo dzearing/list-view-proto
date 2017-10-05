@@ -1,5 +1,7 @@
-import { Store, createStore, compose } from 'redux';
+import { Store, createStore, compose, applyMiddleware } from 'redux';
 import { DevTools } from './containers/DevTools';
+import reducers from './reducers/index';
+import thunk from 'redux-thunk';
 
 export interface IColumn { }
 export interface IItem { }
@@ -23,12 +25,17 @@ export interface IFilesStore {
   viewType: ViewType;
 }
 
-function reducer(state: IFilesStore, action: {}): IFilesStore {
-  return state;
+function reducer(state: IFilesStore, action: { type: string, data?: any }): IFilesStore {
+    let reducerFunction = reducers[action.type];
+    if (reducerFunction) {
+        return reducerFunction(state, action.data);
+    }
+    return state;
 }
 
 export function configureStore(): Store<IFilesStore> {
   const enhancer = compose(
+    applyMiddleware(thunk),
     DevTools.instrument()
   );
 
@@ -38,12 +45,7 @@ export function configureStore(): Store<IFilesStore> {
       setKey: '',
       viewType: ViewType.List,
       isLoading: false,
-      breadcrumbs: [
-        {
-          key: 'files',
-          text: 'OneDrive'
-        }
-      ],
+      breadcrumbs: [],
       columns: [],
       items: [],
       commands: [
@@ -68,6 +70,5 @@ export function configureStore(): Store<IFilesStore> {
     },
     enhancer
   );
-
 }
 

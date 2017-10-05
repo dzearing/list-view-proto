@@ -1,11 +1,15 @@
+import { OneDriveDataSource } from './onedrive';
+
 interface IDataSetSubscription {
   setKey: string;
   dispose: () => void;
 }
 
-interface IDataSource { }
+interface IDataSource {
+  getItems: (setKey: string, onComplete: (items: any[]) => any, onError: () => void) => void;
+}
 
-export class DataSourceManager {
+class DataSourceManager {
   private _dataSources: { [suffix: string]: IDataSource };
   private _defaultDataSource: IDataSource;
   private _subscriptionsBySet: { [setKey: string]: IDataSetSubscription };
@@ -30,9 +34,14 @@ export class DataSourceManager {
     this._defaultDataSource = dataSource;
   }
 
+  public getDataSource(): IDataSource {
+    // make this smart to parse the key and pick the right datasource
+    return this._defaultDataSource;
+  }
+
   public open(
     setKey: string,
-    onItemsAvailable: () => void
+    onItemsAvailable: (items: any[]) => any
   ): IDataSetSubscription {
     const subscription: IDataSetSubscription = {
       setKey,
@@ -40,6 +49,8 @@ export class DataSourceManager {
         /* */
       }
     };
+
+    this._defaultDataSource.getItems(setKey, onItemsAvailable, () => {});
 
     return subscription;
   }
@@ -83,3 +94,8 @@ const column = {};
 
 
 */
+
+const dataSourceManager = new DataSourceManager();
+dataSourceManager.addDataSource('od', OneDriveDataSource);
+
+export default dataSourceManager;

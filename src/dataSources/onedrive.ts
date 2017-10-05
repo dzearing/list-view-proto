@@ -2,7 +2,7 @@
 export const OneDriveDataSource = {
   getItems: (
     setKey: string,
-    onComplete: () => void,
+    onComplete: (items: any[]) => any,
     onError: () => void
   ) => {
     // tslint:disable-next-line:no-console
@@ -12,9 +12,25 @@ export const OneDriveDataSource = {
       () => {
         // tslint:disable-next-line:no-console
         console.log('I am done.');
-        onComplete();
+
+        let items = [
+          getItem(),
+          getItem(),
+          getItem()
+        ];
+        onComplete(items);
+        return items;
       },
       2000
     );
   }
 };
+
+function getItem() {
+    let item = 'item-' + Math.floor(Math.random()*10);
+    return {
+        key: item,
+        text: item
+    };
+}
+
