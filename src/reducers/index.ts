@@ -42,17 +42,12 @@ export const rootReducer = (state: IFilesStore = DEFAULT_STATE, action: ActionTy
 
     case TypeKeys.UPDATE_ITEMS:
       {
-        const items = action.items;
+        const { breadcrumbs, items } = action;
 
         return {
           ...state,
           items,
-          breadcrumbs: [
-            {
-              key: 'root',
-              text: items[0].displayName
-            }
-          ]
+          breadcrumbs
         };
       }
 

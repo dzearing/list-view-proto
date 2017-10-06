@@ -1,6 +1,6 @@
 import { Dispatch, bindActionCreators } from 'redux';
 import dataSourceManager from '../dataSources/DataSourceManager';
-import { IFilesStore, IItem, ISetActions } from '../interfaces';
+import { IFilesStore, IItem, IBreadcrumb, ISetActions } from '../interfaces';
 
 export const enum TypeKeys {
   UPDATE_ITEMS = 'UPDATE_ITEMS',
@@ -16,13 +16,15 @@ export type ActionTypes =
 export interface IUpdateItemsAction {
   type: TypeKeys.UPDATE_ITEMS;
   setKey: string;
+  breadcrumbs: IBreadcrumb[];
   items: IItem[];
 }
 
-export const updateItems = (setKey: string, items: IItem[]): IUpdateItemsAction => ({
+export const updateItems = (setKey: string, items: IItem[], breadcrumbs: IBreadcrumb[]): IUpdateItemsAction => ({
   type: TypeKeys.UPDATE_ITEMS,
   setKey,
-  items
+  items,
+  breadcrumbs
 });
 
 export interface IReportStatusAction {

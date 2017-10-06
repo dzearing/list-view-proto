@@ -1,8 +1,15 @@
-import { IItem, IDataSource, ISetActions, IOpenSetResponse } from '../interfaces';
+import { IBreadcrumb, IItem, IDataSource, ISetActions, IOpenSetResponse } from '../interfaces';
 
 const textFacet = (text: string) => ({ type: 'text', text });
 const linkFacet = (text: string, href: string) => ({ type: 'link', text, href });
 const imageFacet = (url: string) => ({ type: 'image', url });
+
+const createTextCrumb = (text: string): IBreadcrumb => ({ key: text, text });
+const createLinkCrumb = (text: string, setKey: string): IBreadcrumb => ({
+  key: text,
+  text,
+  href: `#${setKey}` // getNavLink(setKey)
+});
 
 interface IRedditResponse {
   children: {
@@ -25,18 +32,20 @@ interface INormalizedRedditResponse {
   pageToken: string;
 }
 
-function openSet(setKey: string = 'bostonterriers', actions: ISetActions): IOpenSetResponse {
+function openSet(setKey: string, actions: ISetActions): IOpenSetResponse {
+  // 1. parse setKey, extract details.
+  const subreddit = setKey || 'bostonterriers';
+
   let hasCanceled = false;
   let pendingRequest = false;
   let items: IItem[] = [];
+  let breadcrumbs: IBreadcrumb[] = _getBreadcrumbs(subreddit);
   let nextPageToken: string | undefined;
 
   function _getMoreItems(): void {
     if (!pendingRequest) {
       pendingRequest = true;
 
-      // 1. parse setKey, extract details.
-      const subreddit = setKey;
 
       // 2. fetch items.
       _getItems(subreddit, nextPageToken)
@@ -46,7 +55,7 @@ function openSet(setKey: string = 'bostonterriers', actions: ISetActions): IOpen
           pendingRequest = false;
           if (!hasCanceled) {
             nextPageToken = response.pageToken;
-            actions.updateItems(setKey, items.concat(response.items));
+            actions.updateItems(setKey, items.concat(response.items), breadcrumbs);
           }
         })
 
@@ -63,13 +72,20 @@ function openSet(setKey: string = 'bostonterriers', actions: ISetActions): IOpen
   // Start the fetching.
   _getMoreItems();
 
-  // return callbacks for getting new items and closing the set.
+  // Return callbacks for getting new items and closing the set.
   return {
     getMoreItems: _getMoreItems,
     closeSet: () => {
       hasCanceled = true;
     }
   };
+}
+
+function _getBreadcrumbs(subreddit: string): IBreadcrumb[] {
+  return [
+    createTextCrumb('All subreddits'),
+    createLinkCrumb(subreddit, subreddit)
+  ];
 }
 
 function _getItems(subreddit: string, nextPageToken?: string): Promise<INormalizedRedditResponse> {

@@ -1,3 +1,5 @@
+import { updateItems, reportStatus, reportError } from '../actions';
+
 export type IItemType =
   'folder' |
   'sharedFolder' |
@@ -32,9 +34,9 @@ export interface IItem {
 }
 
 export interface ISetActions {
-  updateItems: (setKey: string, items: IItem[]) => void;
-  reportStatus: (statusMessage: string) => void;
-  reportError: (error: Error) => void;
+  updateItems: typeof updateItems;
+  reportStatus: typeof reportStatus;
+  reportError: typeof reportError;
 }
 
 export interface IOpenSetResponse {
@@ -47,7 +49,11 @@ export interface IDataSource {
 }
 export interface IColumn { }
 export interface IButton { }
-export interface IBreadcrumb { }
+export interface IBreadcrumb {
+  key: string;
+  text: string;
+  href?: string;
+}
 
 export const enum ViewType {
   CompactList = 1,

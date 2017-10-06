@@ -10,14 +10,16 @@ import {
 import { IItem } from '../interfaces';
 
 export interface IFilesViewProps {
-  items: IItem[];
-  columns: IColumn[];
-  openSet: () => void;
+  setKey?: string;
 }
 
-export interface IFilesViewState { }
+export interface IFilesViewBaseProps extends IFilesViewProps {
+  items: IItem[];
+  columns: IColumn[];
+  openSet: typeof openSet;
+}
 
-export class FilesViewBase extends React.Component<IFilesViewProps, IFilesViewState> {
+export class FilesViewBase extends React.Component<IFilesViewBaseProps, {}> {
   public render(): JSX.Element {
     const { columns, items } = this.props;
 
@@ -30,11 +32,11 @@ export class FilesViewBase extends React.Component<IFilesViewProps, IFilesViewSt
   }
 
   public componentDidMount(): void {
-    this.props.openSet();
+    this.props.openSet(this.props.setKey!);
   }
 }
 
-export const FilesView = connect(
+export const FilesView: React.ComponentClass<IFilesViewProps> = connect(
   state => ({
     columns: state.columns,
     items: state.items
@@ -47,4 +49,4 @@ export const FilesView = connect(
       dispatch
     )
   })
-)(FilesViewBase as any);
+)(FilesViewBase as any) as any;

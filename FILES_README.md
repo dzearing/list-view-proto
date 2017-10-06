@@ -54,3 +54,12 @@ Normalization allows us to perform the following actions genericly:
 
 All items must have unique `id` attributes, which should not conflict with any other item.
 
+# Open issues
+
+How does a given set know what columns to render?
+
+Where do we provide localized strings for columns? Are these proprietary per data source? ( Perhaps. )
+
+How do we configure a column to be sortable? Filterable? Groupable?
+
+How does the host get notifications when
