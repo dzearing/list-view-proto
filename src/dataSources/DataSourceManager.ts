@@ -1,12 +1,11 @@
-import { OneDriveDataSource } from './onedrive';
+// import { OneDriveDataSource } from './onedrive';
+import { RedditDataSource } from './reddit';
+
+import { ISetActions, IDataSource } from '../interfaces';
 
 interface IDataSetSubscription {
   setKey: string;
-  dispose: () => void;
-}
-
-interface IDataSource {
-  getItems: (setKey: string, onComplete: (items: any[]) => any, onError: () => void) => void;
+  actions: ISetActions;
 }
 
 class DataSourceManager {
@@ -39,63 +38,24 @@ class DataSourceManager {
     return this._defaultDataSource;
   }
 
-  public open(
+  public openSet(
     setKey: string,
-    onItemsAvailable: (items: any[]) => any
+    actions: ISetActions
   ): IDataSetSubscription {
+
     const subscription: IDataSetSubscription = {
       setKey,
-      dispose: () => {
-        /* */
-      }
+      actions
     };
 
-    this._defaultDataSource.getItems(setKey, onItemsAvailable, () => {});
+    this._defaultDataSource.openSet(setKey, actions);
 
     return subscription;
   }
-
 }
-
-
-
-/**
-
-function normalizeItem() {
-
-}
-
-const item = {
-  id: 'a',
-  caps: [0, 1, 3],
-  displayName: '',
-  type: '',
-  facets: {
-    displayName: {
-      type: 'name',
-      text: 'File',
-      setKey: '',
-    },
-    link: {
-      type: 'url',
-      text: 'asdf',
-      href: 'asdf'
-    },
-    usage: {
-      type: 'chart',
-      data: [],
-    }
-  }
-};
-
-
-const actions = {};
-const column = {};
-
-
-*/
 
 const dataSourceManager = new DataSourceManager();
-dataSourceManager.addDataSource('od', OneDriveDataSource);
+
+dataSourceManager.addDataSource('reddit', RedditDataSource);
 
 export default dataSourceManager;

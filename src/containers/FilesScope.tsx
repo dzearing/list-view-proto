@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
-import { configureStore, IFilesStore } from '../configureStore';
+import { configureStore } from '../configureStore';
+import { IFilesStore } from '../interfaces';
+
 import { Fabric } from 'office-ui-fabric-react';
 
 export class FilesScope extends React.Component<{}, {}> {
