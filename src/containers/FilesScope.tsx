@@ -1,15 +1,19 @@
 import * as React from 'react';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
-import { configureStore, IFilesStore } from '../configureStore';
+import { configureStore, IFilesStore, IFilesStoreConfiguration } from '../configureStore';
 import { Fabric } from 'office-ui-fabric-react';
 
-export class FilesScope extends React.Component<{}, {}> {
+export interface IFilesScopeProps {
+  config?: IFilesStoreConfiguration;
+}
+
+export class FilesScope extends React.Component<IFilesScopeProps, {}> {
   private _store: Store<IFilesStore>;
 
-  constructor() {
-    super();
-    this._store = configureStore();
+  constructor(props: IFilesScopeProps) {
+    super(props);
+    this._store = configureStore(this.props.config);
   }
 
   render() {

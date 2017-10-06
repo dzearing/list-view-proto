@@ -1,18 +1,22 @@
-import { OneDriveDataSource } from './onedrive';
+import { IItem, IFilesStore } from '../configureStore';
+import { Dispatch } from 'redux';
 
 interface IDataSetSubscription {
   setKey: string;
+  dispatch: Dispatch<IFilesStore>;
   dispose: () => void;
 }
 
-interface IDataSource {
-  getItems: (setKey: string, onComplete: (items: any[]) => any, onError: () => void) => void;
+export interface IDataSource {
+  getItems: (setKey: string, onComplete: (items: IItem[]) => any, onError: () => void) => void;
+  createItem: (setKey: string, onComplete: (item: IItem) => any, onError: () => void) => void;
+  renameItem: (setKey: string, itemKey: string, newName: string, onComplete: (item: IItem) => any, onError: () => void) => void;
 }
 
 class DataSourceManager {
   private _dataSources: { [suffix: string]: IDataSource };
   private _defaultDataSource: IDataSource;
-  private _subscriptionsBySet: { [setKey: string]: IDataSetSubscription };
+  private _subscriptionsBySet: { [setKey: string]: IDataSetSubscription[] };
 
   private _items = {};
   private _sets = {};
@@ -41,61 +45,57 @@ class DataSourceManager {
 
   public open(
     setKey: string,
-    onItemsAvailable: (items: any[]) => any
+    dispatch: Dispatch<IFilesStore>
   ): IDataSetSubscription {
     const subscription: IDataSetSubscription = {
-      setKey,
+      setKey: setKey,
+      dispatch: dispatch,
       dispose: () => {
         /* */
       }
     };
+    if (!this._subscriptionsBySet[setKey]) {
+      this._subscriptionsBySet[setKey] = [];
+    }
+    this._subscriptionsBySet[setKey].push(subscription);
 
-    this._defaultDataSource.getItems(setKey, onItemsAvailable, () => {});
+    this._defaultDataSource.getItems(
+      setKey,
+      (items) => dispatch({
+        type: 'UPDATE_ITEMS',
+        data: {
+          setKey,
+          items
+        }
+      }),
+      () => {}
+    );
 
     return subscription;
   }
 
-}
-
-
-
-/**
-
-function normalizeItem() {
-
-}
-
-const item = {
-  id: 'a',
-  caps: [0, 1, 3],
-  displayName: '',
-  type: '',
-  facets: {
-    displayName: {
-      type: 'name',
-      text: 'File',
-      setKey: '',
-    },
-    link: {
-      type: 'url',
-      text: 'asdf',
-      href: 'asdf'
-    },
-    usage: {
-      type: 'chart',
-      data: [],
+  public invalidateSet(setKey: string): void {
+    let subscriptions = this._subscriptionsBySet[setKey];
+    if (subscriptions && subscriptions.length > 0) {
+      this._defaultDataSource.getItems(
+        setKey,
+        (items) => {
+          subscriptions.forEach((sub: IDataSetSubscription) => {
+            sub.dispatch({
+              type: 'UPDATE_ITEMS',
+              data: {
+                setKey,
+                items
+              }
+            })
+          });
+        },
+        () => {}
+      );
     }
   }
-};
 
-
-const actions = {};
-const column = {};
-
-
-*/
+}
 
 const dataSourceManager = new DataSourceManager();
-dataSourceManager.addDataSource('od', OneDriveDataSource);
-
 export default dataSourceManager;

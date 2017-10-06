@@ -1,5 +1,8 @@
 import * as React from 'react';
-
+import dataSourceManager from './dataSources/DataSourceManager';
+import { OneDriveDataSource } from './dataSources/onedrive';
+// import topCommands from './commands/topCommands';
+import './App.css';
 import {
   FilesBreadcrumb,
   FilesCommandBar,
@@ -23,18 +26,27 @@ import { DevTools } from './containers/DevTools';
 // );
 
 class App extends React.Component {
+  constructor() {
+    super();
+
+    dataSourceManager.addDataSource('od', OneDriveDataSource);
+  }
 
   render() {
+    /* let config = {
+      topCommands: topCommands,
+      setKey: 'od:root1'
+    }; */
+
     return (
       <div className="App">
-
-        <FilesScope>
+        <div className="AppTitle">DEFAULT</div>
+        <FilesScope >
           <FilesCommandBar />
           <FilesBreadcrumb />
           <FilesView />
           <DevTools />
         </FilesScope>
-
       </div>
     );
   }

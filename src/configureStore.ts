@@ -2,6 +2,8 @@ import { StoreEnhancer, Store, createStore, compose, applyMiddleware } from 'red
 import { DevTools } from './containers/DevTools';
 import reducers from './reducers/index';
 import thunk from 'redux-thunk';
+import { IContextualMenuItem } from 'office-ui-fabric-react';
+import topCommands from './defaults/topCommands';
 
 export interface IColumn { }
 export interface IItem {
@@ -10,12 +12,20 @@ export interface IItem {
   facets?: any[];
 }
 
-export interface IButton { }
+export interface ICommandContext {
+    setKey: string;
+    selectedItems: IItem[];
+}
+
+export interface ICommand extends IContextualMenuItem {
+  isAvailable?: (context: ICommandContext) => boolean;
+}
+
 export interface IBreadcrumb { }
 // tslint:disable-next-line:no-any
 export interface IBaseAction<T = any> {
   type: string;
-  data: T;
+  data?: T;
 }
 export enum ViewType {
   CompactList = 1,
@@ -29,40 +39,30 @@ export interface IFilesStore {
   breadcrumbs: IBreadcrumb[];
   columns: IColumn[];
   items: IItem[];
-  commands: IButton[];
+  commands: ICommand[];
   errorMessage: string;
   viewType: ViewType;
+  selectedItems: IItem[];
+}
+
+export interface IFilesStoreConfiguration {
+  topCommands?: ICommand[];
+  setKey?: string;
 }
 
 const DEFAULT_STATE = {
-  setKey: '',
+  setKey: 'od:root',
   viewType: ViewType.List,
   isLoading: false,
   breadcrumbs: [],
   columns: [],
   items: [],
-  commands: [
-    {
-      key: 'new',
-      name: 'New',
-      iconProps: { iconName: 'Add' },
-      items: [
-        {
-          key: 'newFolder',
-          name: 'New folder'
-        }
-      ]
-    },
-    {
-      key: 'upload',
-      name: 'Upload',
-      iconProps: { iconName: 'Upload' }
-    }
-  ],
+  selectedItems: [],
+  commands: topCommands,
   errorMessage: ''
 };
 
-function reducer(state: IFilesStore = DEFAULT_STATE, action: IBaseAction): IFilesStore {
+function reducer(state: IFilesStore, action: IBaseAction): IFilesStore {
   let reducerFunction = reducers[action.type];
   if (reducerFunction) {
     return reducerFunction(state, action);
@@ -70,9 +70,20 @@ function reducer(state: IFilesStore = DEFAULT_STATE, action: IBaseAction): IFile
   return state;
 }
 
-export function configureStore(): Store<IFilesStore> {
+export function configureStore(config?: IFilesStoreConfiguration): Store<IFilesStore> {
+  let initialState = DEFAULT_STATE;
+  if (config) {
+    if (config.setKey) {
+      initialState.setKey = config.setKey;
+    }
+    if (config.topCommands) {
+      initialState.commands = config.topCommands;
+    }
+  }
+
   return createStore<IFilesStore>(
     reducer,
+    initialState,
     compose(
       applyMiddleware(thunk),
       DevTools.instrument()
