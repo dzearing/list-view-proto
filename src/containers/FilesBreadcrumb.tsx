@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 // import { bindActionCreators } from 'redux';
 import { Breadcrumb, IBreadcrumbItem } from 'office-ui-fabric-react';
 // import { IItem } from '../interfaces';
+import { createTextCrumb } from '../utilities/breadcrumbs';
 
 export interface IFilesBreadcrumbProps {
   items: IBreadcrumbItem[];
@@ -14,9 +15,10 @@ class FilesBreadcrumbBase extends React.Component<IFilesBreadcrumbProps, IFilesB
   public render(): JSX.Element {
     const { items } = this.props;
 
+    let breadcrumbs = (!items || items.length == 0) ? [ createTextCrumb('Files') ] : items;
     return (
       <Breadcrumb
-        items={ items }
+        items={ breadcrumbs }
       />
     );
   }

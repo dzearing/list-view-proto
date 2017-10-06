@@ -3,33 +3,51 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { openSet } from '../actions';
-
+import { openSet, setSelectedItems } from '../actions';
 import {
   DetailsList,
-  IColumn
+  IColumn,
+  Selection
 } from 'office-ui-fabric-react/lib/DetailsList';
 import { IItem } from '../interfaces';
 
 export interface IFilesViewProps {
-  setKey?: string;
+  setKey: string;
+  items: IItem[];
 }
 
 export interface IFilesViewBaseProps extends IFilesViewProps {
-  items: IItem[];
   columns: IColumn[];
   openSet: typeof openSet;
+  isLoading: boolean;
+  setSelectedItems: (selectedItems: IItem[]) => void;
 }
 
 export class FilesViewBase extends React.Component<IFilesViewBaseProps, {}> {
-  public render(): JSX.Element {
-    const { columns, items } = this.props;
+  private _selection: Selection;
 
-    return (
+  constructor(props) {
+    super(props);
+
+    this._onSelectionChange = this._onSelectionChange.bind(this);
+    this._selection = new Selection({
+      onSelectionChanged: this._onSelectionChange
+    })
+  }
+
+  public render(): JSX.Element {
+    const { isLoading, items, columns } = this.props;
+
+    const listColumns = (!columns || columns.length === 0) ? undefined : columns;
+
+    return isLoading ? (
+      <div>Loading...</div>
+    ) : (
       <DetailsList
         items={ items }
-        columns={ columns }
+        columns={ listColumns }
         onItemInvoked={ item => this.props.openSet(item.key) }
+        selection={ this._selection }
       />
     );
   }
@@ -37,17 +55,24 @@ export class FilesViewBase extends React.Component<IFilesViewBaseProps, {}> {
   public componentDidMount(): void {
     this.props.openSet(this.props.setKey!);
   }
+
+  private _onSelectionChange() {
+    this.props.setSelectedItems(this._selection.getSelection() as IItem[]);
+  }
 }
 
-export const FilesView: React.ComponentClass<IFilesViewProps> = connect(
+export const FilesView = connect(
   store => ({
+    setKey: store.setKey,
+    items: store.items,
     columns: store.columns,
-    items: store.items
+    isLoading: store.isLoading
   }),
   dispatch => ({
     ...bindActionCreators(
       {
-        openSet
+        openSet,
+        setSelectedItems
       },
       dispatch
     )

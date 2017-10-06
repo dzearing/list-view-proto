@@ -1,39 +1,16 @@
 import { IFilesStore, ViewType } from '../interfaces';
 import { TypeKeys, ActionTypes } from '../actions';
+import topCommands from '../defaults/topCommands';
 
-const DEFAULT_STATE = {
-  setKey: '',
+export const DEFAULT_STATE = {
+  setKey: 'od:root',
   viewType: ViewType.List,
   isLoading: false,
   breadcrumbs: [],
-  columns: [
-    {
-      key: 'displayName',
-      name: 'Name',
-      fieldName: 'displayName',
-      minWidth: 200,
-      maxWidth: 400
-    }
-  ],
+  columns: [],
   items: [],
-  commands: [
-    {
-      key: 'new',
-      name: 'New',
-      iconProps: { iconName: 'Add' },
-      items: [
-        {
-          key: 'newFolder',
-          name: 'New folder'
-        }
-      ]
-    },
-    {
-      key: 'upload',
-      name: 'Upload',
-      iconProps: { iconName: 'Upload' }
-    }
-  ],
+  selectedItems: [],
+  commands: topCommands,
   errorMessage: ''
 };
 
@@ -46,11 +23,29 @@ export const rootReducer = (state: IFilesStore = DEFAULT_STATE, action: ActionTy
 
         return {
           ...state,
+          isLoading: false,
           breadcrumbs,
           columns,
           items
         };
       }
+
+    case TypeKeys.SET_LOADING:
+    {
+      return {
+        ...state,
+        isLoading: true
+      };
+    }
+
+    case TypeKeys.SET_SELECTION:
+    {
+      const items = action.data || [];
+      return {
+        ...state,
+        selectedItems: items
+      };
+    }
 
     default:
       return state;

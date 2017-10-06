@@ -1,4 +1,5 @@
 import { updateItems, reportStatus, reportError } from '../actions';
+import { IContextualMenuItem } from 'office-ui-fabric-react';
 
 export type IItemType =
   'folder' |
@@ -28,9 +29,23 @@ export type IFacetDictionary = { [fieldName: string]: IFacet };
 export interface IItem {
   key: string;
   displayName: string;
-  itemType: string;
+  itemType?: string;
   childCount?: number;
   facets?: IFacetDictionary;
+}
+
+export interface ICommandContext {
+    setKey: string;
+    selectedItems: IItem[];
+}
+
+export interface ICommand extends IContextualMenuItem {
+  isAvailable?: (context: ICommandContext) => boolean;
+}
+
+export interface IFilesStoreConfiguration {
+  topCommands?: ICommand[];
+  setKey?: string;
 }
 
 export interface ISetActions {
@@ -46,9 +61,12 @@ export interface IOpenSetResponse {
 
 export interface IDataSource {
   openSet: (setKey: string, actions: ISetActions) => IOpenSetResponse;
+  createItem?: (setKey: string, onComplete: (item: IItem) => any, onError: () => void) => void;
+  renameItem?: (setKey: string, itemKey: string, newName: string, onComplete: (item: IItem) => any, onError: () => void) => void;
+  refreshSet?: (setKey: string, onComplete: (items: IItem[]) => any, onError: () => void) => void;
 }
+
 export interface IColumn { }
-export interface IButton { }
 export interface IBreadcrumb {
   key: string;
   text: string;
@@ -67,7 +85,8 @@ export interface IFilesStore {
   breadcrumbs: IBreadcrumb[];
   columns: IColumn[];
   items: IItem[];
-  commands: IButton[];
+  commands: ICommand[];
   errorMessage: string;
   viewType: ViewType;
+  selectedItems: IItem[];
 }

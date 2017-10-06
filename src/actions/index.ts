@@ -1,16 +1,20 @@
 import { Dispatch, bindActionCreators } from 'redux';
 import dataSourceManager from '../dataSources/DataSourceManager';
-import { IFilesStore, IItem, IBreadcrumb, ISetActions, IColumn } from '../interfaces';
+import { IFilesStore, IItem, IBreadcrumb, ISetActions, IColumn, ICommandContext } from '../interfaces';
 
 export const enum TypeKeys {
   UPDATE_ITEMS = 'UPDATE_ITEMS',
   REPORT_STATUS = 'REPORT_STATUS',
-  REPORT_ERROR = 'REPORT_ERROR'
+  REPORT_ERROR = 'REPORT_ERROR',
+  SET_LOADING = 'SET_LOADING',
+  SET_SELECTION = 'SET_SELECTION'
 }
 
 export type ActionTypes =
   IUpdateItemsAction |
   IReportStatusAction |
+  ISetLoadingAction |
+  ISetSelectionAction |
   IReportErrorAction;
 
 export interface IUpdateItemsAction {
@@ -19,6 +23,15 @@ export interface IUpdateItemsAction {
   items: IItem[];
   setKey: string;
   type: TypeKeys.UPDATE_ITEMS;
+}
+
+export interface ISetLoadingAction {
+  type: TypeKeys.SET_LOADING;
+}
+
+export interface ISetSelectionAction {
+  type: TypeKeys.SET_SELECTION;
+  data: IItem[];
 }
 
 export const updateItems = (
@@ -32,6 +45,13 @@ export const updateItems = (
   items,
   columns,
   breadcrumbs
+});
+
+export const setSelectedItems = (
+  selectedItems: IItem[]
+): ISetSelectionAction => ({
+  type: TypeKeys.SET_SELECTION,
+  data: selectedItems
 });
 
 export interface IReportStatusAction {
@@ -56,6 +76,10 @@ export const reportError = (error: Error): IReportErrorAction => ({
 
 export const openSet = (setKey: string) => {
   return (dispatch: Dispatch<IFilesStore>) => {
+    dispatch({
+      type: 'SET_LOADING',
+      data: true
+    });
 
     dataSourceManager.openSet(
       setKey,
@@ -68,7 +92,45 @@ export const openSet = (setKey: string) => {
           },
           dispatch
         ) as ISetActions
-      }
+      },
+      dispatch
     );
   };
 };
+
+export const executeCommand = (key: string, context: ICommandContext) => {
+  switch (key) {
+    case 'new':
+      return (dispatch: Dispatch<IFilesStore>) => {
+        let createItem = dataSourceManager.getDataSource().createItem;
+        if (createItem) {
+          createItem(
+            context.setKey,
+            (item) => {
+              dataSourceManager.invalidateSet(context.setKey);
+            },
+            () => {}
+          );
+        }
+      }
+    case 'rename':
+      return (dispatch: Dispatch<IFilesStore>) => {
+        let renameItem = dataSourceManager.getDataSource().renameItem;
+        if (renameItem) {
+          renameItem(
+            context.setKey,
+            context.selectedItems[0].key,
+            'new name',
+            (item) => {
+              dataSourceManager.invalidateSet(context.setKey);
+            },
+            () => {}
+          );
+        }
+      }
+    default:
+      return {};
+  }
+}
+
+

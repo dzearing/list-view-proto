@@ -1,17 +1,23 @@
+
 import { OneDriveDataSource } from './onedrive';
 import { RedditDataSource } from './reddit';
+import { MockDataSource } from './mock';
 
-import { ISetActions, IDataSource } from '../interfaces';
+import { ISetActions, IDataSource, IFilesStore } from '../interfaces';
+
+import { Dispatch } from 'redux';
 
 interface IDataSetSubscription {
   setKey: string;
   actions: ISetActions;
+  dispatch: Dispatch<IFilesStore>;
+  dispose: () => void;
 }
 
 class DataSourceManager {
   private _dataSources: { [suffix: string]: IDataSource };
   private _defaultDataSource: IDataSource;
-  private _subscriptionsBySet: { [setKey: string]: IDataSetSubscription };
+  private _subscriptionsBySet: { [setKey: string]: IDataSetSubscription[] };
 
   private _items = {};
   private _sets = {};
@@ -40,23 +46,57 @@ class DataSourceManager {
 
   public openSet(
     setKey: string,
-    actions: ISetActions
+    actions: ISetActions,
+    dispatch: Dispatch<IFilesStore>
   ): IDataSetSubscription {
 
     const subscription: IDataSetSubscription = {
-      setKey,
-      actions
+      setKey: setKey,
+      actions: actions,
+      dispatch: dispatch,
+      dispose: () => {
+      }
     };
+
+    if (!this._subscriptionsBySet[setKey]) {
+      this._subscriptionsBySet[setKey] = [];
+    }
+    this._subscriptionsBySet[setKey].push(subscription);
 
     this._defaultDataSource.openSet(setKey, actions);
 
     return subscription;
   }
+
+  public invalidateSet(setKey: string): void {
+    let subscriptions = this._subscriptionsBySet[setKey];
+    if (subscriptions && subscriptions.length > 0) {
+      let refreshSet = this._defaultDataSource.refreshSet;
+      if (refreshSet) {
+        refreshSet(
+          setKey,
+          (items) => {
+            subscriptions.forEach((sub: IDataSetSubscription) => {
+              sub.actions.updateItems(
+                setKey,
+                items,
+                [], // columns
+                [] // breadcrumbs
+              );
+            });
+          },
+          () => {}
+        );
+      }
+    }
+  }
+
 }
 
 const dataSourceManager = new DataSourceManager();
 
 dataSourceManager.addDataSource('reddit', RedditDataSource);
 dataSourceManager.addDataSource('onedrive', OneDriveDataSource);
+dataSourceManager.addDataSource('mock', MockDataSource);
 
 export default dataSourceManager;

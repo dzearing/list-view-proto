@@ -6,3 +6,7 @@
   height: 40px;
   z-index: 1;
 }
+
+.AppTitle {
+  padding: 20px;
+}
