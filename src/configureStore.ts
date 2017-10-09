@@ -4,8 +4,14 @@ import { rootReducer, DEFAULT_STATE } from './reducers';
 import thunk from 'redux-thunk';
 import { IFilesStore, IFilesStoreConfiguration } from './interfaces';
 
-export function configureStore(config?: IFilesStoreConfiguration): Store<IFilesStore> {
-  let initialState = DEFAULT_STATE;
+export function configureStore(
+  config?: IFilesStoreConfiguration
+  ): Store<IFilesStore> {
+
+  let initialState: Partial<IFilesStore> = {
+    ...DEFAULT_STATE
+   };
+
   if (config) {
     if (config.setKey) {
       initialState.setKey = config.setKey;
@@ -16,7 +22,7 @@ export function configureStore(config?: IFilesStoreConfiguration): Store<IFilesS
   }
   return createStore<IFilesStore>(
     rootReducer,
-    initialState,
+    initialState as IFilesStore,
     compose(
       applyMiddleware(thunk),
       DevTools.instrument()

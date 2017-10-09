@@ -1,7 +1,7 @@
 import * as React from 'react';
 import dataSourceManager from './dataSources/DataSourceManager';
 import { MockDataSource } from './dataSources/mock';
-// import topCommands from './commands/topCommands';
+import topCommands from './commands/topCommands';
 import './App.css';
 import {
   FilesBreadcrumb,
@@ -21,18 +21,24 @@ class App extends React.Component {
   }
 
   render() {
-    /* let config = {
+    let config = {
       topCommands: topCommands,
       setKey: 'od:root1'
-    }; */
+    };
 
     return (
       <div className='App'>
         <div className="AppTitle">DEFAULT</div>
         <FilesScope>
-          <div className='App-commandBar'>
-            <FilesCommandBar />
-          </div>
+          <FilesCommandBar />
+          <FilesBreadcrumb />
+          <FilesView />
+          <DevTools />
+        </FilesScope>
+
+        <div className="AppTitle">CUSTOM</div>
+        <FilesScope config={ config } >
+          <FilesCommandBar />
           <FilesBreadcrumb />
           <FilesView />
           <DevTools />
