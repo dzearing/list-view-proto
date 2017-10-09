@@ -103,7 +103,7 @@ class ItemStore {
 let itemStore = new ItemStore();
 
 function getItem() {
-    let item = Math.floor(Math.random()*10).toString();
+    let item = Math.floor(Math.random()*100).toString();
     return {
         key: item,
         displayName: 'item-' + item

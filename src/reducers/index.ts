@@ -3,7 +3,7 @@ import { TypeKeys, ActionTypes } from '../actions';
 import topCommands from '../defaults/topCommands';
 
 export const DEFAULT_STATE = {
-  setKey: 'od:root',
+  setKey: 'root',
   viewType: ViewType.List,
   isLoading: false,
   breadcrumbs: [],

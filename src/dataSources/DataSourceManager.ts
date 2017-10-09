@@ -1,8 +1,3 @@
-
-import { OneDriveDataSource } from './onedrive';
-import { RedditDataSource } from './reddit';
-import { MockDataSource } from './mock';
-
 import { ISetActions, IDataSource, IFilesStore } from '../interfaces';
 
 import { Dispatch } from 'redux';
@@ -94,9 +89,5 @@ class DataSourceManager {
 }
 
 const dataSourceManager = new DataSourceManager();
-
-dataSourceManager.addDataSource('reddit', RedditDataSource);
-dataSourceManager.addDataSource('onedrive', OneDriveDataSource);
-dataSourceManager.addDataSource('mock', MockDataSource);
 
 export default dataSourceManager;
