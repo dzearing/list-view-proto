@@ -1,17 +1,15 @@
 import { IItem, IBaseAction, IFilesStore } from '../configureStore';
 
 const reducers = {
-  'UPDATE_ITEMS': updateItems,
-  'SET_LOADING': setLoading,
-  'SET_SELECTION': setSelection
+  'UPDATE_ITEMS': updateItems
 };
 
 function updateItems(state: IFilesStore, action: IBaseAction<{ setKey: string, items: IItem[] }>): IFilesStore {
-  const items = action.data && action.data.items || [];
+  const items = action.data.items;
   const breadcrumbs = [
     {
       key: 'root',
-      text: items ? items[0].text : 'root'
+      text: items[0].text
     }
   ];
   return {
@@ -19,21 +17,6 @@ function updateItems(state: IFilesStore, action: IBaseAction<{ setKey: string, i
     isLoading: false,
     items: items,
     breadcrumbs: breadcrumbs
-  };
-}
-
-function setLoading(state: IFilesStore, action: IBaseAction<boolean>): IFilesStore {
-  return {
-    ...state,
-    isLoading: true
-  };
-}
-
-function setSelection(state: IFilesStore, action: IBaseAction<IItem[]>): IFilesStore {
-  const items = action.data || [];
-  return {
-    ...state,
-    selectedItems: items
   };
 }
 
