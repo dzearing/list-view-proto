@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import * as actionCreators from '../actions';
-import { Breadcrumb } from 'office-ui-fabric-react';
+// import { bindActionCreators } from 'redux';
+import { Breadcrumb, IBreadcrumbItem } from 'office-ui-fabric-react';
+// import { IItem } from '../interfaces';
 
 export interface IFilesBreadcrumbProps {
-  items: any[]
+  items: IBreadcrumbItem[];
 }
 
 export interface IFilesBreadcrumbState { }
@@ -25,9 +25,6 @@ class FilesBreadcrumbBase extends React.Component<IFilesBreadcrumbProps, IFilesB
 export const FilesBreadcrumb = connect(
   state => ({
     items: state.breadcrumbs
-  }),
-  dispatch => ({
-    actions: bindActionCreators(actionCreators as any, dispatch)
   })
   // tslint:disable-next-line:no-any
 )(FilesBreadcrumbBase as any);

@@ -1,23 +1,58 @@
-import { IItem, IBaseAction, IFilesStore } from '../configureStore';
+import { IFilesStore, ViewType } from '../interfaces';
+import { TypeKeys, ActionTypes } from '../actions';
 
-const reducers = {
-  'UPDATE_ITEMS': updateItems
+const DEFAULT_STATE = {
+  setKey: '',
+  viewType: ViewType.List,
+  isLoading: false,
+  breadcrumbs: [],
+  columns: [
+    {
+      key: 'displayName',
+      name: 'Name',
+      fieldName: 'displayName',
+      minWidth: 200,
+      maxWidth: 400
+    }
+  ],
+  items: [],
+  commands: [
+    {
+      key: 'new',
+      name: 'New',
+      iconProps: { iconName: 'Add' },
+      items: [
+        {
+          key: 'newFolder',
+          name: 'New folder'
+        }
+      ]
+    },
+    {
+      key: 'upload',
+      name: 'Upload',
+      iconProps: { iconName: 'Upload' }
+    }
+  ],
+  errorMessage: ''
 };
 
-function updateItems(state: IFilesStore, action: IBaseAction<{ setKey: string, items: IItem[] }>): IFilesStore {
-  const items = action.data.items;
-  const breadcrumbs = [
-    {
-      key: 'root',
-      text: items[0].text
-    }
-  ];
-  return {
-    ...state,
-    isLoading: false,
-    items: items,
-    breadcrumbs: breadcrumbs
-  };
-}
+export const rootReducer = (state: IFilesStore = DEFAULT_STATE, action: ActionTypes): IFilesStore => {
+  switch (action.type) {
 
-export default reducers;
+    case TypeKeys.UPDATE_ITEMS:
+      {
+        const { breadcrumbs, columns, items } = action;
+
+        return {
+          ...state,
+          breadcrumbs,
+          columns,
+          items
+        };
+      }
+
+    default:
+      return state;
+  }
+};

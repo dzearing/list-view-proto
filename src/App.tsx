@@ -6,35 +6,25 @@ import {
   FilesScope,
   FilesView
 } from './containers';
+import './App.css';
 
 import { DevTools } from './containers/DevTools';
-
-// const dataSources = [
-//   OneDriveDataSource({ options }),
-//   SharePointDataSource({ options }),
-//   etc
-// ];
-
-// DataSourceManager.addDataSources([
-//   {
-//     suffix: 'od',
-//     dataSource: () => new OneDriveDataSource({ ..options .. })
-//   }
-// );
 
 class App extends React.Component {
 
   render() {
     return (
-      <div className="App">
-
+      <div className='App'>
         <FilesScope>
-          <FilesCommandBar />
+          <div className='App-commandBar'>
+            <FilesCommandBar />
+          </div>
+
           <FilesBreadcrumb />
+
           <FilesView />
           <DevTools />
         </FilesScope>
-
       </div>
     );
   }
