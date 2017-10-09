@@ -1,3 +1,5 @@
+// tslint:disable:no-any
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -27,6 +29,7 @@ export class FilesViewBase extends React.Component<IFilesViewBaseProps, {}> {
       <DetailsList
         items={ items }
         columns={ columns }
+        onItemInvoked={ item => this.props.openSet(item.key) }
       />
     );
   }
@@ -37,9 +40,9 @@ export class FilesViewBase extends React.Component<IFilesViewBaseProps, {}> {
 }
 
 export const FilesView: React.ComponentClass<IFilesViewProps> = connect(
-  state => ({
-    columns: state.columns,
-    items: state.items
+  store => ({
+    columns: store.columns,
+    items: store.items
   }),
   dispatch => ({
     ...bindActionCreators(

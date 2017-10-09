@@ -15,26 +15,16 @@ class App extends React.Component {
   render() {
     return (
       <div className='App'>
-
-        <div className='App-column'>
-          <FilesScope>
+        <FilesScope>
+          <div className='App-commandBar'>
             <FilesCommandBar />
-            <FilesBreadcrumb />
-            <FilesView setKey='' />
-            <DevTools />
-          </FilesScope>
-        </div>
+          </div>
 
-        <div className='App-column'>
-          <FilesScope>
-            <FilesCommandBar />
-            <FilesBreadcrumb />
-            <FilesView setKey='politics' />
-            <DevTools />
-          </FilesScope>
+          <FilesBreadcrumb />
 
-        </div>
-
+          <FilesView />
+          <DevTools />
+        </FilesScope>
       </div>
     );
   }

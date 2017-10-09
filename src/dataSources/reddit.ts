@@ -1,15 +1,7 @@
 import { IBreadcrumb, IItem, IDataSource, ISetActions, IOpenSetResponse } from '../interfaces';
-
-const textFacet = (text: string) => ({ type: 'text', text });
-const linkFacet = (text: string, href: string) => ({ type: 'link', text, href });
-const imageFacet = (url: string) => ({ type: 'image', url });
-
-const createTextCrumb = (text: string): IBreadcrumb => ({ key: text, text });
-const createLinkCrumb = (text: string, setKey: string): IBreadcrumb => ({
-  key: text,
-  text,
-  href: `#${setKey}` // getNavLink(setKey)
-});
+import { textFacet, linkFacet, imageFacet } from '../utilities/facets';
+import { createTextCrumb, createLinkCrumb } from '../utilities/breadcrumbs';
+import { defaultColumns } from '../utilities/columns';
 
 interface IRedditResponse {
   children: {
@@ -46,7 +38,6 @@ function openSet(setKey: string, actions: ISetActions): IOpenSetResponse {
     if (!pendingRequest) {
       pendingRequest = true;
 
-
       // 2. fetch items.
       _getItems(subreddit, nextPageToken)
 
@@ -55,7 +46,11 @@ function openSet(setKey: string, actions: ISetActions): IOpenSetResponse {
           pendingRequest = false;
           if (!hasCanceled) {
             nextPageToken = response.pageToken;
-            actions.updateItems(setKey, items.concat(response.items), breadcrumbs);
+            actions.updateItems(
+              setKey,
+              items.concat(response.items),
+              defaultColumns,
+              breadcrumbs);
           }
         })
 
@@ -93,8 +88,9 @@ function _getItems(subreddit: string, nextPageToken?: string): Promise<INormaliz
     `${subreddit}.json` +
     `${nextPageToken ? '?after=' + nextPageToken : ''}`;
 
-  return fetch(url).then(
-    response => response.json()).then(json => _normalize(json.data));
+  return fetch(url)
+    .then(response => response.json())
+    .then(json => _normalize(json.data));
 }
 
 function _normalize(response: IRedditResponse): INormalizedRedditResponse {

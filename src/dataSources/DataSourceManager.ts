@@ -1,4 +1,4 @@
-// import { OneDriveDataSource } from './onedrive';
+import { OneDriveDataSource } from './onedrive';
 import { RedditDataSource } from './reddit';
 
 import { ISetActions, IDataSource } from '../interfaces';
@@ -57,5 +57,6 @@ class DataSourceManager {
 const dataSourceManager = new DataSourceManager();
 
 dataSourceManager.addDataSource('reddit', RedditDataSource);
+dataSourceManager.addDataSource('onedrive', OneDriveDataSource);
 
 export default dataSourceManager;
