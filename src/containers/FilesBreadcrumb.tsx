@@ -15,7 +15,7 @@ class FilesBreadcrumbBase extends React.Component<IFilesBreadcrumbProps, IFilesB
   public render(): JSX.Element {
     const { items } = this.props;
 
-    let breadcrumbs = (!items || items.length == 0) ? [ createTextCrumb('Files') ] : items;
+    let breadcrumbs = (!items || items.length === 0) ? [createTextCrumb('Files')] : items;
     return (
       <Breadcrumb
         items={ breadcrumbs }

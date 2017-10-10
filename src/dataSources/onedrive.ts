@@ -1,8 +1,9 @@
 
-import { IDataSource, ISetActions, IOpenSetResponse, IItem, IBreadcrumb } from '../interfaces';
+import { IDataSource, ISetActions, IOpenSetResponse, IItem, IBreadcrumb, IColumn } from '../interfaces';
 import { GraphService, IDriveResponse, getData } from './graph/getData';
-import { defaultColumns } from '../utilities/columns';
+import { nameColumn, facetColumn } from '../utilities/columns';
 import { createTextCrumb, createLinkCrumb } from '../utilities/breadcrumbs';
+import { textFacet, dateFacet } from '../utilities/facets';
 
 interface INormalizedGraphResponse {
   items: IItem[];
@@ -18,6 +19,7 @@ function openSet(setKey: string, actions: ISetActions): IOpenSetResponse {
   let pendingRequest = false;
   let items: IItem[] = [];
   let breadcrumbs: IBreadcrumb[] = _getBreadcrumbs(setKey);
+  let columns: IColumn[] = _getColumns(setKey);
 
   // let nextPageToken: string | undefined;
 
@@ -40,7 +42,7 @@ function openSet(setKey: string, actions: ISetActions): IOpenSetResponse {
             actions.updateItems(
               setKey,
               items.concat(response.items),
-              defaultColumns,
+              columns,
               breadcrumbs
             );
           }
@@ -58,7 +60,7 @@ function openSet(setKey: string, actions: ISetActions): IOpenSetResponse {
   actions.updateItems(
     setKey,
     [],
-    defaultColumns,
+    columns,
     breadcrumbs
   );
 
@@ -79,16 +81,9 @@ function _normalize(graphResponse: IDriveResponse): INormalizedGraphResponse {
     items: graphResponse.value.map(driveItem => ({
       key: driveItem.id,
       displayName: driveItem.name,
-      itemType: 'folder',
       facets: {
-        dateModified: {
-          type: 'date',
-          date: new Date(driveItem.lastModifiedDateTime)
-        },
-        size: {
-          type: 'text',
-          text: driveItem.size
-        }
+        dateModified: dateFacet(driveItem.lastModifiedDateTime),
+        size: textFacet(driveItem.size)
       }
     }))
   };
@@ -108,6 +103,14 @@ function _getBreadcrumbs(setKey: string): IBreadcrumb[] {
   }
 
   return breadcrumbs;
+}
+
+function _getColumns(setKey: string): IColumn[] {
+  return [
+    nameColumn,
+    facetColumn('dateModified', 'Date modified'),
+    facetColumn('size', 'Size')
+  ];
 }
 
 export const OneDriveDataSource: IDataSource = {

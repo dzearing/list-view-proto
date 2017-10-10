@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import * as actionCreators from '../actions';
 import { ICommand, IItem, ICommandContext } from '../interfaces';
 
-
 export interface IFilesCommandBarProps {
   items: ICommand[];
   setKey: string;
@@ -20,20 +19,20 @@ export class FilesCommandBarBase extends React.Component<IFilesCommandBarProps, 
     const context = this._getCommandContext();
     const menuItems = this.props.items.filter((command: ICommand) =>
       this._isCommandAvailable(command, context)).map((command: ICommand) => {
-      return {
-        ...command,
-        onClick: () => {
-          executeCommand(command.key, context);
-        }
-      } as IContextualMenuItem;
-    });
+        return {
+          ...command,
+          onClick: () => {
+            executeCommand(command.key, context);
+          }
+        } as IContextualMenuItem;
+      });
     return (
       <CommandBar items={ menuItems } />
     );
   }
 
   private _isCommandAvailable(command: ICommand, context: ICommandContext): boolean {
-    return command.isAvailable ? command.isAvailable(context): true;
+    return command.isAvailable ? command.isAvailable(context) : true;
   }
 
   private _getCommandContext(): ICommandContext {
@@ -52,6 +51,7 @@ export const FilesCommandBar = connect(
     selectedItems: state.selectedItems
   }),
   dispatch => ({
+    // tslint:disable-next-line:no-any
     ...bindActionCreators(actionCreators as any, dispatch)
   })
   // tslint:disable-next-line:no-any

@@ -26,13 +26,13 @@ export interface IFilesViewBaseProps extends IFilesViewProps {
 export class FilesViewBase extends React.Component<IFilesViewBaseProps, {}> {
   private _selection: Selection;
 
-  constructor(props) {
+  constructor(props: IFilesViewBaseProps) {
     super(props);
 
     this._onSelectionChange = this._onSelectionChange.bind(this);
     this._selection = new Selection({
       onSelectionChanged: this._onSelectionChange
-    })
+    });
   }
 
   public render(): JSX.Element {
@@ -43,13 +43,13 @@ export class FilesViewBase extends React.Component<IFilesViewBaseProps, {}> {
     return isLoading ? (
       <div>Loading...</div>
     ) : (
-      <DetailsList
-        items={ items }
-        columns={ listColumns }
-        onItemInvoked={ item => this.props.openSet(item.key) }
-        selection={ this._selection }
-      />
-    );
+        <DetailsList
+          items={ items }
+          columns={ listColumns }
+          onItemInvoked={ item => this.props.openSet(item.key) }
+          selection={ this._selection }
+        />
+      );
   }
 
   public componentDidMount(): void {

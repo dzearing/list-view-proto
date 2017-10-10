@@ -1,5 +1,9 @@
 import { IBreadcrumb, IItem, IDataSource, ISetActions, IOpenSetResponse } from '../interfaces';
-import { textFacet, linkFacet, imageFacet } from '../utilities/facets';
+import {
+  textFacet,
+  linkFacet,
+  // imageFacet
+} from '../utilities/facets';
 import { createTextCrumb, createLinkCrumb } from '../utilities/breadcrumbs';
 import { defaultColumns } from '../utilities/columns';
 
@@ -23,6 +27,16 @@ interface INormalizedRedditResponse {
   items: IItem[];
   pageToken: string;
 }
+
+// let item: IItem = {
+//   key: 'asdf',
+//   displayName: 'asdf',
+//   facets: {
+//     datesadfdsf: imageFacet('asdf')
+//   }
+// };
+
+// console.log(item);
 
 function openSet(setKey: string, actions: ISetActions): IOpenSetResponse {
   // 1. parse setKey, extract details.
@@ -101,14 +115,12 @@ function _normalize(response: IRedditResponse): INormalizedRedditResponse {
       return {
         key: data.id,
         displayName: data.title,
-        itemType: 'file',
         facets: {
           subreddit: textFacet(data.subreddit),
           title: textFacet(data.title),
           author: textFacet(data.author),
           url: linkFacet(data.title, data.url),
           score: textFacet(data.score),
-          thumb: imageFacet(data.thumbnail),
           comments: textFacet(data.num_comments)
         }
       };

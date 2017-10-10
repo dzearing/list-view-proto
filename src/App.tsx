@@ -28,7 +28,7 @@ class App extends React.Component {
 
     return (
       <div className='App'>
-        <div className="AppTitle">DEFAULT</div>
+        <div className='AppTitle'>DEFAULT</div>
         <FilesScope>
           <FilesCommandBar />
           <FilesBreadcrumb />
@@ -36,7 +36,7 @@ class App extends React.Component {
           <DevTools />
         </FilesScope>
 
-        <div className="AppTitle">CUSTOM</div>
+        <div className='AppTitle'>CUSTOM</div>
         <FilesScope config={ config } >
           <FilesCommandBar />
           <FilesBreadcrumb />

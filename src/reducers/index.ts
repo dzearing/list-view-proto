@@ -3,8 +3,8 @@ import { TypeKeys, ActionTypes } from '../actions';
 import topCommands from '../defaults/topCommands';
 
 export const DEFAULT_STATE = {
-  setKey: 'root',
-  viewType: ViewType.List,
+  setKey: '',
+  viewType: ViewType.fullList,
   isLoading: false,
   breadcrumbs: [],
   columns: [],
@@ -31,21 +31,21 @@ export const rootReducer = (state: IFilesStore = DEFAULT_STATE, action: ActionTy
       }
 
     case TypeKeys.SET_LOADING:
-    {
-      return {
-        ...state,
-        isLoading: true
-      };
-    }
+      {
+        return {
+          ...state,
+          isLoading: true
+        };
+      }
 
     case TypeKeys.SET_SELECTION:
-    {
-      const items = action.data || [];
-      return {
-        ...state,
-        selectedItems: items
-      };
-    }
+      {
+        const items = action.data || [];
+        return {
+          ...state,
+          selectedItems: items
+        };
+      }
 
     default:
       return state;

@@ -1,27 +1,28 @@
 import { IItem, ISetActions } from '../interfaces';
 
 export const MockDataSource = {
-    openSet: (setKey: string, actions: ISetActions) => {
+  openSet: (setKey: string, actions: ISetActions) => {
     function getItems(): void {
-        let items = itemStore.getItems(setKey);
-        actions.updateItems(
-            setKey,
-            items,
-            [],
-            []
-        );
+      let items = itemStore.getItems(setKey);
+      actions.updateItems(
+        setKey,
+        items,
+        [],
+        []
+      );
     }
 
     getItems();
     // Return callbacks for getting new items and closing the set.
     return {
-        getMoreItems: getItems,
-        closeSet: () => {}
+      getMoreItems: getItems,
+      closeSet: () => { /* no-op */ }
     };
   },
 
   refreshSet: (
     setKey: string,
+    // tslint:disable-next-line:no-any
     onComplete: (items: any[]) => any,
     onError: () => void
   ) => {
@@ -37,6 +38,7 @@ export const MockDataSource = {
 
   createItem: (
     setKey: string,
+    // tslint:disable-next-line:no-any
     onComplete: (item: any) => any,
     onError: () => void
   ) => {
@@ -53,6 +55,7 @@ export const MockDataSource = {
     setKey: string,
     itemKey: string,
     newName: string,
+    // tslint:disable-next-line:no-any
     onComplete: (item: any) => any,
     onError: () => void
   ) => {
@@ -68,7 +71,7 @@ export const MockDataSource = {
 };
 
 class ItemStore {
-  private _itemsDictionary: { [key: string] : IItem[] };
+  private _itemsDictionary: { [key: string]: IItem[] };
 
   constructor() {
     this._itemsDictionary = {};
@@ -76,7 +79,7 @@ class ItemStore {
 
   getItems(key: string): IItem[] {
     if (!this._itemsDictionary[key]) {
-      this._itemsDictionary[key] = [ getItem(), getItem(), getItem() ];
+      this._itemsDictionary[key] = [getItem(), getItem(), getItem()];
     }
     return this._itemsDictionary[key];
   }
@@ -84,13 +87,15 @@ class ItemStore {
   createItem(key: string): IItem {
     let items = this._itemsDictionary[key];
     const newItem = getItem();
-    this._itemsDictionary[key] = [ newItem ].concat(items);
+
+    this._itemsDictionary[key] = [newItem].concat(items);
     return newItem;
   }
 
   renameItem(key: string, itemKey: string, newName: string): void {
     let items = this._itemsDictionary[key];
-    let newItems = [ ...items];
+    let newItems = [...items];
+
     newItems.forEach((item) => {
       if (item.key === itemKey) {
         item.displayName = newName;
@@ -103,9 +108,10 @@ class ItemStore {
 let itemStore = new ItemStore();
 
 function getItem() {
-    let item = Math.floor(Math.random()*100).toString();
-    return {
-        key: item,
-        displayName: 'item-' + item
-    };
+  let item = Math.floor(Math.random() * 100).toString();
+
+  return {
+    key: item,
+    displayName: 'item-' + item
+  };
 }

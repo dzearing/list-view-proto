@@ -1,42 +1,54 @@
 import { updateItems, reportStatus, reportError } from '../actions';
 import { IContextualMenuItem } from 'office-ui-fabric-react';
 
-export type IItemType =
-  'folder' |
-  'sharedFolder' |
-  'file';
+// export const enum ItemType {
+//   folder = 'folder',
+//   sharedFolder = 'sharedFolder',
+//   file = 'file'
+// }
 
-export interface IFacet {
-  type: string;
+export const enum FacetType {
+  text = 'text',
+  image = 'image',
+  link = 'link',
+  date = 'date',
+  unsupported = 'none'
 }
 
-export interface ITextFacet extends IFacet {
+export interface IImageFacet {
+  type: FacetType.image;
+  src: string;
+}
+
+export interface ITextFacet {
+  type: FacetType.text;
   text: string;
 }
 
-export interface INameLinkFacet { }
-
 export interface ILinkFacet {
+  type: FacetType.link;
+  text: string;
   href: string;
 }
 
 export interface IDateFacet {
+  type: FacetType.date;
   date: Date;
 }
+
+export type IFacet = ITextFacet | ILinkFacet | IDateFacet;
 
 export type IFacetDictionary = { [fieldName: string]: IFacet };
 
 export interface IItem {
   key: string;
   displayName: string;
-  itemType?: string;
-  childCount?: number;
   facets?: IFacetDictionary;
 }
 
 export interface ICommandContext {
-    setKey: string;
-    selectedItems: IItem[];
+  setKey: string;
+  selectedItems: IItem[];
 }
 
 export interface ICommand extends IContextualMenuItem {
@@ -62,11 +74,19 @@ export interface IOpenSetResponse {
 export interface IDataSource {
   openSet: (setKey: string, actions: ISetActions) => IOpenSetResponse;
   createItem?: (setKey: string, onComplete: (item: IItem) => any, onError: () => void) => void;
-  renameItem?: (setKey: string, itemKey: string, newName: string, onComplete: (item: IItem) => any, onError: () => void) => void;
+  renameItem?: (
+    setKey: string,
+    itemKey: string,
+    newName: string,
+    onComplete: (item: IItem) => any,
+    onError: () => void
+  ) => void;
   refreshSet?: (setKey: string, onComplete: (items: IItem[]) => any, onError: () => void) => void;
 }
 
 export interface IColumn { }
+export interface IButton { }
+
 export interface IBreadcrumb {
   key: string;
   text: string;
@@ -74,9 +94,9 @@ export interface IBreadcrumb {
 }
 
 export const enum ViewType {
-  CompactList = 1,
-  List = 2,
-  Grid = 3
+  compactList = 1,
+  fullList = 2,
+  grid = 3
 }
 
 export interface IFilesStore {

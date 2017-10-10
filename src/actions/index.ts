@@ -109,10 +109,13 @@ export const executeCommand = (key: string, context: ICommandContext) => {
             (item) => {
               dataSourceManager.invalidateSet(context.setKey);
             },
-            () => {}
+            () => {
+              /* no-op */
+            }
           );
         }
-      }
+      };
+
     case 'rename':
       return (dispatch: Dispatch<IFilesStore>) => {
         let renameItem = dataSourceManager.getDataSource().renameItem;
@@ -124,13 +127,14 @@ export const executeCommand = (key: string, context: ICommandContext) => {
             (item) => {
               dataSourceManager.invalidateSet(context.setKey);
             },
-            () => {}
+            () => {
+              /* no-op */
+            }
           );
         }
-      }
+      };
+
     default:
       return {};
   }
-}
-
-
+};

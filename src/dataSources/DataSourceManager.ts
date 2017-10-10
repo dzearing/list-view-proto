@@ -50,6 +50,7 @@ class DataSourceManager {
       actions: actions,
       dispatch: dispatch,
       dispose: () => {
+        /* no-op */
       }
     };
 
@@ -80,7 +81,9 @@ class DataSourceManager {
               );
             });
           },
-          () => {}
+          () => {
+            /* no-op */
+          }
         );
       }
     }
