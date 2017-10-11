@@ -10,11 +10,11 @@ const topCommands: ICommand[] = [
       }
     },
     {
-      key: 'rename',
-      name: 'Rename',
-      iconProps: { iconName: 'Edit' },
+      key: 'upload',
+      name: 'Upload',
+      iconProps: { iconName: 'Upload' },
       isAvailable: (context: ICommandContext) => {
-          return context.selectedItems.length === 1;
+          return context.selectedItems.length === 0;
       }
     }
 ];

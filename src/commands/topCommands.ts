@@ -1,11 +1,22 @@
-import { ICommand } from '../interfaces';
+import { ICommand, ICommandContext } from '../interfaces';
 
-const commands: ICommand[] = [
+const topCommands: ICommand[] = [
     {
       key: 'new',
       name: 'New',
-      iconProps: { iconName: 'Add' }
+      iconProps: { iconName: 'Add' },
+      isAvailable: (context: ICommandContext) => {
+          return context.selectedItems.length === 0;
+      }
+    },
+    {
+      key: 'rename',
+      name: 'Rename',
+      iconProps: { iconName: 'Edit' },
+      isAvailable: (context: ICommandContext) => {
+          return context.selectedItems.length === 1;
+      }
     }
 ];
 
-export default commands;
+export default topCommands;

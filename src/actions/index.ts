@@ -102,10 +102,10 @@ export const executeCommand = (key: string, context: ICommandContext) => {
   switch (key) {
     case 'new':
       return (dispatch: Dispatch<IFilesStore>) => {
-        let createItem = dataSourceManager.getDataSource().createItem;
+        let createItem = dataSourceManager.getDataSource(context.setKey).createItem;
         if (createItem) {
           createItem(
-            context.setKey,
+            dataSourceManager.normalizeKey(context.setKey),
             (item) => {
               dataSourceManager.invalidateSet(context.setKey);
             },
@@ -118,10 +118,10 @@ export const executeCommand = (key: string, context: ICommandContext) => {
 
     case 'rename':
       return (dispatch: Dispatch<IFilesStore>) => {
-        let renameItem = dataSourceManager.getDataSource().renameItem;
+        let renameItem = dataSourceManager.getDataSource(context.setKey).renameItem;
         if (renameItem) {
           renameItem(
-            context.setKey,
+            dataSourceManager.normalizeKey(context.setKey),
             context.selectedItems[0].key,
             'new name',
             (item) => {

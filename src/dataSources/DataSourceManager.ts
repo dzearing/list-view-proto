@@ -34,9 +34,17 @@ class DataSourceManager {
     this._defaultDataSource = dataSource;
   }
 
-  public getDataSource(): IDataSource {
-    // make this smart to parse the key and pick the right datasource
-    return this._defaultDataSource;
+  public getDataSource(key: string): IDataSource {
+    const prefix: string = key.split(':')[0];
+    const dataSource = this._dataSources[prefix];
+    return dataSource || this._defaultDataSource;
+  }
+
+  public normalizeKey(key: string): string {
+    // setKeys contain information consumable by the DSM
+    // this will convert the key to a form that the datasources can consume
+    const normalizedKey: string = key.indexOf(':') === -1 ? key : key.split(':')[1];
+    return normalizedKey;
   }
 
   public openSet(
@@ -59,7 +67,7 @@ class DataSourceManager {
     }
     this._subscriptionsBySet[setKey].push(subscription);
 
-    this._defaultDataSource.openSet(setKey, actions);
+    this.getDataSource(setKey).openSet(this.normalizeKey(setKey), actions);
 
     return subscription;
   }
@@ -67,10 +75,10 @@ class DataSourceManager {
   public invalidateSet(setKey: string): void {
     let subscriptions = this._subscriptionsBySet[setKey];
     if (subscriptions && subscriptions.length > 0) {
-      let refreshSet = this._defaultDataSource.refreshSet;
+      let refreshSet = this.getDataSource(setKey).refreshSet;
       if (refreshSet) {
         refreshSet(
-          setKey,
+          this.normalizeKey(setKey),
           (items) => {
             subscriptions.forEach((sub: IDataSetSubscription) => {
               sub.actions.updateItems(
