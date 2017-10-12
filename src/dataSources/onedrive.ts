@@ -1,5 +1,5 @@
 
-import { IDataSource, ISetActions, IOpenSetResponse, IItem, IBreadcrumb, IColumn } from '../interfaces';
+import { IDataSource, ISetActions, IOpenSetResponse, IItem, IBreadcrumb, IColumn, IRenameActionContext } from '../interfaces';
 import { GraphService, IDriveResponse, getData } from './graph/getData';
 import { nameColumn, facetColumn } from '../utilities/columns';
 import { createTextCrumb, createLinkCrumb } from '../utilities/breadcrumbs';
@@ -56,14 +56,6 @@ function openSet(setKey: string, actions: ISetActions): IOpenSetResponse {
     }
   }
 
-  // Clear state
-  actions.updateItems(
-    setKey,
-    [],
-    columns,
-    breadcrumbs
-  );
-
   // Start the fetching.
   _getMoreItems();
 
@@ -114,5 +106,16 @@ function _getColumns(setKey: string): IColumn[] {
 }
 
 export const OneDriveDataSource: IDataSource = {
-  openSet
+  openSet,
+  deferredActions: {
+    'RENAME': (context: IRenameActionContext) => {
+        setTimeout(
+          () => {
+            alert('renaming item: ' + context.itemKey + ' to ' + context.newName);
+            context.onComplete({ key: context.itemKey, displayName: context.newName });
+          },
+          500
+        );
+    }
+  }
 };

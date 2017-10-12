@@ -16,6 +16,15 @@ const topCommands: ICommand[] = [
       isAvailable: (context: ICommandContext) => {
           return context.selectedItems.length === 0;
       }
+    },
+    {
+      key: 'rename',
+      name: 'Rename',
+      iconProps: { iconName: 'Edit' },
+      isAvailable: (context: ICommandContext) => {
+          return context.selectedItems.length === 1;
+      },
+      dataSourceActionKey: 'RENAME'
     }
 ];
 

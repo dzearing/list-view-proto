@@ -2,13 +2,13 @@ import * as React from 'react';
 import { CommandBar, IContextualMenuItem } from 'office-ui-fabric-react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as actionCreators from '../actions';
+import { executeCommand } from '../actions/deferredActions'; // TODO: make this really deferred
 import { ICommand, IItem, ICommandContext } from '../interfaces';
 
 export interface IFilesCommandBarProps {
   items: ICommand[];
   setKey: string;
-  executeCommand: (actionKey: string, context: ICommandContext) => void;
+  executeCommand: (command: ICommand, context: ICommandContext) => void;
   selectedItems: IItem[];
 }
 
@@ -22,7 +22,7 @@ export class FilesCommandBarBase extends React.Component<IFilesCommandBarProps, 
         return {
           ...command,
           onClick: () => {
-            executeCommand(command.key, context);
+              executeCommand(command, context);
           }
         } as IContextualMenuItem;
       });
@@ -52,7 +52,9 @@ export const FilesCommandBar = connect(
   }),
   dispatch => ({
     // tslint:disable-next-line:no-any
-    ...bindActionCreators(actionCreators as any, dispatch)
+    ...bindActionCreators({
+      executeCommand
+    }, dispatch)
   })
   // tslint:disable-next-line:no-any
 )(FilesCommandBarBase as any);

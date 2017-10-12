@@ -1,14 +1,15 @@
-import { IItem, ISetActions } from '../interfaces';
+import { IItem, ISetActions, ICreateNewActionContext, IRenameActionContext } from '../interfaces';
 
 export const MockDataSource = {
   openSet: (setKey: string, actions: ISetActions) => {
     function getItems(): void {
-      let items = itemStore.getItems(setKey);
-      actions.updateItems(
-        setKey,
-        items,
-        [],
-        []
+      setTimeout(
+        () => {
+          let items = itemStore.getItems(setKey);
+          actions.updateItems(setKey, items, [], []);
+          return items;
+        },
+        500
       );
     }
 
@@ -36,38 +37,26 @@ export const MockDataSource = {
     );
   },
 
-  createItem: (
-    setKey: string,
-    // tslint:disable-next-line:no-any
-    onComplete: (item: any) => any,
-    onError: () => void
-  ) => {
-    setTimeout(
-      () => {
-        const item = itemStore.createItem(setKey);
-        onComplete(item);
-      },
-      500
-    );
-  },
-
-  renameItem: (
-    setKey: string,
-    itemKey: string,
-    newName: string,
-    // tslint:disable-next-line:no-any
-    onComplete: (item: any) => any,
-    onError: () => void
-  ) => {
-    setTimeout(
-      () => {
-        const item = itemStore.renameItem(setKey, itemKey, newName);
-        onComplete(item);
-      },
-      500
-    );
+  deferredActions: {
+    'CREATE_NEW': (context: ICreateNewActionContext) => {
+        setTimeout(
+          () => {
+            const item = itemStore.createItem(context.setKey);
+            context.onComplete(item);
+          },
+          500
+        );
+    },
+    'RENAME': (context: IRenameActionContext) => {
+        setTimeout(
+          () => {
+            const item = itemStore.renameItem(context.setKey, context.itemKey, context.newName);
+            context.onComplete(item);
+          },
+          500
+        );
+    }
   }
-
 };
 
 class ItemStore {
@@ -92,16 +81,19 @@ class ItemStore {
     return newItem;
   }
 
-  renameItem(key: string, itemKey: string, newName: string): void {
+  renameItem(key: string, itemKey: string, newName: string): IItem {
     let items = this._itemsDictionary[key];
     let newItems = [...items];
+    let returnItem;
 
     newItems.forEach((item) => {
       if (item.key === itemKey) {
         item.displayName = newName;
+        returnItem = item;
       }
     });
     this._itemsDictionary[key] = newItems;
+    return returnItem;
   }
 }
 

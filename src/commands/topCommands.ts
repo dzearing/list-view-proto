@@ -7,7 +7,8 @@ const topCommands: ICommand[] = [
       iconProps: { iconName: 'Add' },
       isAvailable: (context: ICommandContext) => {
           return context.selectedItems.length === 0;
-      }
+      },
+      dataSourceActionKey: 'CREATE_NEW'
     },
     {
       key: 'rename',
@@ -15,7 +16,8 @@ const topCommands: ICommand[] = [
       iconProps: { iconName: 'Edit' },
       isAvailable: (context: ICommandContext) => {
           return context.selectedItems.length === 1;
-      }
+      },
+      dataSourceActionKey: 'RENAME'
     }
 ];
 

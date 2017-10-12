@@ -1,5 +1,5 @@
 import { IFilesStore, ViewType } from '../interfaces';
-import { TypeKeys, ActionTypes } from '../actions';
+import { TypeKeys, ActionTypes } from '../actions/actionInterfaces';
 import topCommands from '../defaults/topCommands';
 
 export const DEFAULT_STATE = {
@@ -34,7 +34,7 @@ export const rootReducer = (state: IFilesStore = DEFAULT_STATE, action: ActionTy
       {
         return {
           ...state,
-          isLoading: true
+          isLoading: action.data
         };
       }
 

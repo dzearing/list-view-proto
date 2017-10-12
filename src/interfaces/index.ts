@@ -53,6 +53,7 @@ export interface ICommandContext {
 
 export interface ICommand extends IContextualMenuItem {
   isAvailable?: (context: ICommandContext) => boolean;
+  dataSourceActionKey?: string;
 }
 
 export interface IFilesStoreConfiguration {
@@ -73,16 +74,28 @@ export interface IOpenSetResponse {
 
 export interface IDataSource {
   openSet: (setKey: string, actions: ISetActions) => IOpenSetResponse;
-  createItem?: (setKey: string, onComplete: (item: IItem) => any, onError: () => void) => void;
-  renameItem?: (
-    setKey: string,
-    itemKey: string,
-    newName: string,
-    onComplete: (item: IItem) => any,
-    onError: () => void
-  ) => void;
   refreshSet?: (setKey: string, onComplete: (items: IItem[]) => any, onError: () => void) => void;
+  deferredActions?: IActionsDictionary;
 }
+
+export interface IRenameActionContext {
+    setKey: string;
+    itemKey: string;
+    newName: string;
+    onComplete: (item: IItem) => any;
+    onError: () => void;
+}
+export type IRenameAction = (context: IRenameActionContext) => void;
+
+export interface ICreateNewActionContext {
+  setKey: string,
+  onComplete: (item: IItem) => any;
+  onError: () => void;
+}
+export type ICreateNewAction = (context: ICreateNewActionContext) => void;
+
+export type IDataSourceAction = IRenameAction | ICreateNewAction;
+export type IActionsDictionary = { [actionType: string]: IDataSourceAction };
 
 export interface IColumn { }
 export interface IButton { }
