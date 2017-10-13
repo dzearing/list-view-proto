@@ -2,19 +2,19 @@ import * as React from 'react';
 import { CommandBar, IContextualMenuItem } from 'office-ui-fabric-react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { executeCommand } from '../actions/deferredActions'; // TODO: make this really deferred
+import { executeDeferredCommand } from '../actions/pltActions';
 import { ICommand, IItem, ICommandContext } from '../interfaces';
 
 export interface IFilesCommandBarProps {
   items: ICommand[];
   setKey: string;
-  executeCommand: (command: ICommand, context: ICommandContext) => void;
+  executeDeferredCommand: (command: ICommand, context: ICommandContext) => void;
   selectedItems: IItem[];
 }
 
 export class FilesCommandBarBase extends React.Component<IFilesCommandBarProps, {}> {
   render() {
-    const { executeCommand } = this.props;
+    const { executeDeferredCommand } = this.props;
 
     const context = this._getCommandContext();
     const menuItems = this.props.items.filter((command: ICommand) =>
@@ -22,7 +22,7 @@ export class FilesCommandBarBase extends React.Component<IFilesCommandBarProps, 
         return {
           ...command,
           onClick: () => {
-              executeCommand(command, context);
+              executeDeferredCommand(command, context);
           }
         } as IContextualMenuItem;
       });
@@ -51,9 +51,8 @@ export const FilesCommandBar = connect(
     selectedItems: state.selectedItems
   }),
   dispatch => ({
-    // tslint:disable-next-line:no-any
     ...bindActionCreators({
-      executeCommand
+      executeDeferredCommand
     }, dispatch)
   })
   // tslint:disable-next-line:no-any

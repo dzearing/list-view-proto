@@ -1,6 +1,5 @@
-import { Dispatch } from 'redux';
 import dataSourceManager from '../dataSources/DataSourceManager';
-import { IFilesStore, ICommand, ICommandContext, IDataSourceAction, ICreateNewAction, IRenameAction } from '../interfaces';
+import { ICommand, ICommandContext, IDataSourceAction, ICreateNewAction, IRenameAction } from '../interfaces';
 
 export const executeCommand = (command: ICommand, context: ICommandContext) => {
   function getDataSourceAction(setKey: string, actionKey?: string): IDataSourceAction {
@@ -15,7 +14,6 @@ export const executeCommand = (command: ICommand, context: ICommandContext) => {
 
   switch (command.key) {
     case 'new':
-      return (dispatch: Dispatch<IFilesStore>) => {
         let createItem = getDataSourceAction(context.setKey, command.dataSourceActionKey) as ICreateNewAction;
         if (createItem) {
           createItem({
@@ -28,10 +26,9 @@ export const executeCommand = (command: ICommand, context: ICommandContext) => {
               }
           });
         }
-      };
+      break;
 
     case 'rename':
-      return (dispatch: Dispatch<IFilesStore>) => {
         let renameItem = getDataSourceAction(context.setKey, command.dataSourceActionKey) as IRenameAction;
         if (renameItem) {
           renameItem({
@@ -46,9 +43,9 @@ export const executeCommand = (command: ICommand, context: ICommandContext) => {
             }
           });
         }
-      };
+      break;
 
     default:
-      return {};
+      break;
   }
 };
