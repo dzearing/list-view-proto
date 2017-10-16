@@ -51,7 +51,12 @@ export interface ICommandContext {
   selectedItems: IItem[];
 }
 
+export interface ICommandExecutor {
+  execute: (command: ICommand, context: ICommandContext) => void;
+}
+
 export interface ICommand extends IContextualMenuItem {
+  loadExecutor: () => Promise<ICommandExecutor>;
   isAvailable?: (context: ICommandContext) => boolean;
   dataSourceActionKey?: string;
 }

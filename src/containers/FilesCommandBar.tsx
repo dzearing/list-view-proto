@@ -2,7 +2,7 @@ import * as React from 'react';
 import { CommandBar, IContextualMenuItem } from 'office-ui-fabric-react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { executeDeferredCommand } from '../actions/pltActions';
+import { executeDeferredCommand } from '../actions/actions';
 import { ICommand, IItem, ICommandContext } from '../interfaces';
 
 export interface IFilesCommandBarProps {

@@ -8,6 +8,7 @@ const topCommands: ICommand[] = [
       isAvailable: (context: ICommandContext) => {
           return context.selectedItems.length === 0;
       },
+      loadExecutor: () => import('./customNewExecutor'),
       dataSourceActionKey: 'CREATE_NEW'
     },
     {
@@ -17,6 +18,7 @@ const topCommands: ICommand[] = [
       isAvailable: (context: ICommandContext) => {
           return context.selectedItems.length === 1;
       },
+      loadExecutor: () => import('../defaults/executors/renameExecutor'),
       dataSourceActionKey: 'RENAME'
     }
 ];

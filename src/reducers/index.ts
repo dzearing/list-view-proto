@@ -1,6 +1,6 @@
 import { IFilesStore, ViewType } from '../interfaces';
 import { TypeKeys, ActionTypes } from '../actions/actionInterfaces';
-import topCommands from '../defaults/topCommands';
+import topCommands from '../defaults/topCommands'; // TODO: should we include this even if custom commands are provided?
 
 export const DEFAULT_STATE = {
   setKey: '',

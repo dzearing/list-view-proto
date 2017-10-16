@@ -7,15 +7,9 @@ const topCommands: ICommand[] = [
       iconProps: { iconName: 'Add' },
       isAvailable: (context: ICommandContext) => {
           return context.selectedItems.length === 0;
-      }
-    },
-    {
-      key: 'upload',
-      name: 'Upload',
-      iconProps: { iconName: 'Upload' },
-      isAvailable: (context: ICommandContext) => {
-          return context.selectedItems.length === 0;
-      }
+      },
+      loadExecutor: () => import('./executors/newExecutor'),
+      dataSourceActionKey: 'CREATE_NEW'
     },
     {
       key: 'rename',
@@ -24,6 +18,7 @@ const topCommands: ICommand[] = [
       isAvailable: (context: ICommandContext) => {
           return context.selectedItems.length === 1;
       },
+      loadExecutor: () => import('./executors/renameExecutor'),
       dataSourceActionKey: 'RENAME'
     }
 ];
