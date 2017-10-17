@@ -3,7 +3,7 @@ import dataSourceManager from './dataSources/DataSourceManager';
 import { MockDataSource } from './dataSources/mock';
 import { RedditDataSource } from './dataSources/reddit';
 import { OneDriveDataSource } from './dataSources/onedrive';
-// import topCommands from './commands/topCommands';
+import topCommands from './commands/topCommands';
 import './App.css';
 import {
   FilesBreadcrumb,
@@ -26,7 +26,7 @@ class App extends React.Component {
 
   render() {
     let config = {
-      // topCommands: topCommands,
+      topCommands: topCommands,
       setKey: 'mock:root'
     };
 
