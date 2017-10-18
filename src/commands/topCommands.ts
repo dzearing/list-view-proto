@@ -1,11 +1,18 @@
 import { ICommand } from '../interfaces';
 import topCommands from '../defaults/topCommands';
 
-let customTopCommands: ICommand[] = topCommands.map((command: ICommand) => {
+let customTopCommands: ICommand[] = [ ...topCommands ];
+
+// remove upload
+customTopCommands.splice(1, 1);
+
+// change new
+customTopCommands = customTopCommands.map((command: ICommand) => {
+    let newCommand = { ...command };
     if (command.key === 'new') {
-        command.loadExecutor = () => import('./customNewExecutor');
+        newCommand.loadExecutor = () => import('./customNewExecutor');
     }
-    return command;
+    return newCommand;
 });
 
 export default customTopCommands;

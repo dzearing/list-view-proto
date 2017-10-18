@@ -25,15 +25,31 @@ class App extends React.Component {
   }
 
   render() {
-    let config = {
-      topCommands: topCommands,
-      setKey: 'mock:root'
-    };
-
     return (
       <div className='App'>
-        <div className="AppTitle">CUSTOM</div>
-        <FilesScope config={ config } >
+        <div className="AppTitle">MOCK</div>
+        <FilesScope config={{
+          setKey: 'mock:root'
+        }} >
+          <FilesCommandBar />
+          <FilesBreadcrumb />
+          <FilesView />
+          <DevTools />
+        </FilesScope>
+
+        <div className="AppTitle">MOCK - CUSTOM COMMANDS</div>
+        <FilesScope config={ {
+          setKey: 'mock:root',
+          topCommands: topCommands
+        }} >
+          <FilesCommandBar />
+          <FilesBreadcrumb />
+          <FilesView />
+          <DevTools />
+        </FilesScope>
+
+        <div className="AppTitle">DEFAULT</div>
+        <FilesScope>
           <FilesCommandBar />
           <FilesBreadcrumb />
           <FilesView />

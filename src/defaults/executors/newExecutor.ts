@@ -4,13 +4,17 @@ import { ICommand, ICommandContext, ICreateNewAction } from '../../interfaces';
 
 export const execute = (command: ICommand, context: ICommandContext) => {
     let createItem = getDataSourceAction(context.setKey, command.dataSourceActionKey) as ICreateNewAction;
-    createItem({
-        setKey: dataSourceManager.normalizeKey(context.setKey),
-        onComplete: (item) => {
-            dataSourceManager.invalidateSet(context.setKey);
-        },
-        onError: () => {
-            /* no-op */
-        }
-    });
+    if (createItem) {
+        createItem({
+            setKey: dataSourceManager.normalizeKey(context.setKey),
+            onComplete: (item) => {
+                dataSourceManager.invalidateSet(context.setKey);
+            },
+            onError: () => {
+                /* no-op */
+            }
+        });
+    } else {
+        alert("the datasource does not support this action");
+    }
 };

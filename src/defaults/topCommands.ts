@@ -12,6 +12,16 @@ const topCommands: ICommand[] = [
       dataSourceActionKey: 'CREATE_NEW'
     },
     {
+      key: 'upload',
+      name: 'Upload',
+      iconProps: { iconName: 'Upload' },
+      isAvailable: (context: ICommandContext) => {
+          return context.selectedItems.length === 0;
+      },
+      loadExecutor: () => import('./executors/newExecutor'),
+      dataSourceActionKey: 'UPLOAD'
+    },
+    {
       key: 'rename',
       name: 'Rename',
       iconProps: { iconName: 'Edit' },
