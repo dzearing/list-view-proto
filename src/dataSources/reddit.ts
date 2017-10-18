@@ -45,7 +45,7 @@ function openSet(setKey: string, actions: ISetActions): IOpenSetResponse {
   let hasCanceled = false;
   let pendingRequest = false;
   let items: IItem[] = [];
-  let breadcrumbs: IBreadcrumb[] = _getBreadcrumbs(subreddit);
+  let breadcrumbs: IBreadcrumb[] = _getBreadcrumbs(subreddit, actions);
   let nextPageToken: string | undefined;
 
   function _getMoreItems(): void {
@@ -90,10 +90,10 @@ function openSet(setKey: string, actions: ISetActions): IOpenSetResponse {
   };
 }
 
-function _getBreadcrumbs(subreddit: string): IBreadcrumb[] {
+function _getBreadcrumbs(subreddit: string, actions: ISetActions): IBreadcrumb[] {
   return [
     createTextCrumb('All subreddits'),
-    createLinkCrumb(subreddit, subreddit)
+    createLinkCrumb(subreddit, subreddit, actions)
   ];
 }
 

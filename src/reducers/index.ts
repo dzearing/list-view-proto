@@ -1,5 +1,6 @@
+import { ActionTypes, TypeKeys } from '../actions';
 import { IFilesStore, ViewType } from '../interfaces';
-import { TypeKeys, ActionTypes } from '../actions';
+
 import topCommands from '../defaults/topCommands';
 
 export const DEFAULT_STATE = {
@@ -16,7 +17,6 @@ export const DEFAULT_STATE = {
 
 export const rootReducer = (state: IFilesStore = DEFAULT_STATE, action: ActionTypes): IFilesStore => {
   switch (action.type) {
-
     case TypeKeys.UPDATE_ITEMS:
       {
         const { breadcrumbs, columns, items } = action;
@@ -32,9 +32,11 @@ export const rootReducer = (state: IFilesStore = DEFAULT_STATE, action: ActionTy
 
     case TypeKeys.SET_LOADING:
       {
+        const { isLoading } = action;
+
         return {
           ...state,
-          isLoading: true
+          isLoading
         };
       }
 

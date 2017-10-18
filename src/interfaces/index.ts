@@ -1,4 +1,11 @@
-import { updateItems, reportStatus, reportError } from '../actions';
+import {
+  openSet,
+  reportError,
+  reportStatus,
+  setLoading,
+  updateItems
+} from '../actions';
+
 import { IContextualMenuItem } from 'office-ui-fabric-react';
 
 // export const enum ItemType {
@@ -61,9 +68,11 @@ export interface IFilesStoreConfiguration {
 }
 
 export interface ISetActions {
-  updateItems: typeof updateItems;
-  reportStatus: typeof reportStatus;
+  openSet: typeof openSet;
   reportError: typeof reportError;
+  reportStatus: typeof reportStatus;
+  setLoading: typeof setLoading;
+  updateItems: typeof updateItems;
 }
 
 export interface IOpenSetResponse {
@@ -73,14 +82,17 @@ export interface IOpenSetResponse {
 
 export interface IDataSource {
   openSet: (setKey: string, actions: ISetActions) => IOpenSetResponse;
+  // tslint:disable-next-line:no-any
   createItem?: (setKey: string, onComplete: (item: IItem) => any, onError: () => void) => void;
   renameItem?: (
     setKey: string,
     itemKey: string,
     newName: string,
+    // tslint:disable-next-line:no-any
     onComplete: (item: IItem) => any,
     onError: () => void
   ) => void;
+  // tslint:disable-next-line:no-any
   refreshSet?: (setKey: string, onComplete: (items: IItem[]) => any, onError: () => void) => void;
 }
 
@@ -91,6 +103,7 @@ export interface IBreadcrumb {
   key: string;
   text: string;
   href?: string;
+  onClick?: () => void;
 }
 
 export const enum ViewType {

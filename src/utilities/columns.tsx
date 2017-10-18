@@ -1,8 +1,9 @@
 // export function getNameColumn(): IColumn {}
 import * as React from 'react';
-import { NameCell } from '../components/NameCell';
+
 import { FacetCell } from '../components/FacetCell';
-import { IColumn } from '../interfaces';
+import { IColumn } from 'office-ui-fabric-react';
+import { NameCell } from '../components/NameCell';
 
 export const nameColumn: IColumn = {
   key: 'displayName',
@@ -19,6 +20,8 @@ export const facetColumn = (fieldName: string, columnName: string): IColumn => (
   fieldName: fieldName,
   minWidth: 180,
   maxWidth: 240,
+  // isSorted: true,
+  // isSortedDescending: true,
   onRender: item => <FacetCell facet={ item.facets[fieldName] } />
 });
 

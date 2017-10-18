@@ -1,6 +1,7 @@
 import { Dispatch, bindActionCreators } from 'redux';
+import { IBreadcrumb, IColumn, ICommandContext, IFilesStore, IItem, ISetActions } from '../interfaces';
+
 import dataSourceManager from '../dataSources/DataSourceManager';
-import { IFilesStore, IItem, IBreadcrumb, ISetActions, IColumn, ICommandContext } from '../interfaces';
 
 export const enum TypeKeys {
   UPDATE_ITEMS = 'UPDATE_ITEMS',
@@ -27,7 +28,13 @@ export interface IUpdateItemsAction {
 
 export interface ISetLoadingAction {
   type: TypeKeys.SET_LOADING;
+  isLoading: boolean;
 }
+
+export const setLoading = (isLoading: boolean): ISetLoadingAction => ({
+  type: TypeKeys.SET_LOADING,
+  isLoading
+});
 
 export interface ISetSelectionAction {
   type: TypeKeys.SET_SELECTION;
@@ -76,16 +83,13 @@ export const reportError = (error: Error): IReportErrorAction => ({
 
 export const openSet = (setKey: string) => {
   return (dispatch: Dispatch<IFilesStore>) => {
-    dispatch({
-      type: 'SET_LOADING',
-      data: true
-    });
-
     dataSourceManager.openSet(
       setKey,
       {
         ...bindActionCreators(
           {
+            openSet,
+            setLoading,
             updateItems,
             reportStatus,
             reportError

@@ -1,15 +1,30 @@
-
-import { IDataSource, ISetActions, IOpenSetResponse, IItem, IBreadcrumb, IColumn } from '../interfaces';
 import { GraphService, IDriveResponse, getData } from './graph/getData';
-import { nameColumn, facetColumn } from '../utilities/columns';
-import { createTextCrumb, createLinkCrumb } from '../utilities/breadcrumbs';
-import { textFacet, dateFacet } from '../utilities/facets';
+import { IBreadcrumb, IColumn, IDataSource, IItem, IOpenSetResponse, ISetActions } from '../interfaces';
+import { createLinkCrumb, createTextCrumb } from '../utilities/breadcrumbs';
+import { dateFacet, textFacet } from '../utilities/facets';
+import { facetColumn, nameColumn } from '../utilities/columns';
+
+import { formatFileSize } from '../utilities/formatFileSize';
 
 interface INormalizedGraphResponse {
   items: IItem[];
 }
 
 const ROOT_KEY = 'root';
+
+const _breadcrumbCache: {
+  [key: string]: {
+    text: string;
+    key: string;
+    parentKey?: string;
+  }
+} = {
+    [ROOT_KEY]: {
+      text: 'Files',
+      key: 'root',
+      parentKey: undefined
+    }
+  };
 
 function openSet(setKey: string, actions: ISetActions): IOpenSetResponse {
   // 1. parse setKey, extract details.
@@ -18,7 +33,7 @@ function openSet(setKey: string, actions: ISetActions): IOpenSetResponse {
   let hasCanceled = false;
   let pendingRequest = false;
   let items: IItem[] = [];
-  let breadcrumbs: IBreadcrumb[] = _getBreadcrumbs(setKey);
+  let breadcrumbs: IBreadcrumb[] = _getBreadcrumbs(setId, actions);
   let columns: IColumn[] = _getColumns(setKey);
 
   // let nextPageToken: string | undefined;
@@ -77,29 +92,41 @@ function openSet(setKey: string, actions: ISetActions): IOpenSetResponse {
 }
 
 function _normalize(graphResponse: IDriveResponse): INormalizedGraphResponse {
+
   return {
-    items: graphResponse.value.map(driveItem => ({
-      key: driveItem.id,
-      displayName: driveItem.name,
-      facets: {
-        dateModified: dateFacet(driveItem.lastModifiedDateTime),
-        size: textFacet(driveItem.size)
-      }
-    }))
+    items: graphResponse.value.map(driveItem => {
+      _breadcrumbCache[driveItem.id] = {
+        text: driveItem.name,
+        key: driveItem.id,
+        parentKey: driveItem.parentReference.path === '/drive/root:' ? ROOT_KEY : driveItem.parentReference.id
+      };
+
+      return {
+        key: driveItem.id,
+        displayName: driveItem.name,
+        facets: {
+          dateModified: dateFacet(driveItem.lastModifiedDateTime),
+          size: textFacet(formatFileSize(Number(driveItem.size)))
+        }
+      };
+    })
   };
 }
 
-function _getBreadcrumbs(setKey: string): IBreadcrumb[] {
+function _getBreadcrumbs(id: string, actions: ISetActions): IBreadcrumb[] {
   const breadcrumbs: IBreadcrumb[] = [];
-  const rootSetKey = '';
-  const isAtRoot = true;
+  let currentCrumb = _breadcrumbCache[id];
 
-  if (isAtRoot) {
-    breadcrumbs.push(
-      isAtRoot
-        ? createTextCrumb('Files')
-        : createLinkCrumb('Files', rootSetKey)
-    );
+  if (!currentCrumb) {
+    return [createTextCrumb('Files')];
+  } else {
+    breadcrumbs.push(createTextCrumb(currentCrumb.text));
+    currentCrumb = _breadcrumbCache[currentCrumb.parentKey!];
+
+    while (currentCrumb) {
+      breadcrumbs.splice(0, 0, createLinkCrumb(currentCrumb.text, currentCrumb.key, actions));
+      currentCrumb = _breadcrumbCache[currentCrumb.parentKey!];
+    }
   }
 
   return breadcrumbs;

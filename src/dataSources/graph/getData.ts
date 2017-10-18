@@ -51,7 +51,9 @@ export interface IDriveResponse extends IGraphResponse<IDriveItem> { }
 
 export function getData<T>(
   service: string,
-  path: string
+  path: string,
+  orderBy?: string,
+  orderAscending?: boolean
 ): Promise<T> {
   return new Promise((resolve, reject) => {
     getAuthToken().then(async token => {
@@ -65,7 +67,8 @@ export function getData<T>(
         mode: 'cors',
         cache: 'default'
       };
-      const url = `${BASE_URL}/${service}/${path}`;
+      const orderParams = orderBy !== undefined ? `orderby=${orderBy} ${orderAscending ? 'asc' : 'desc'}` : '';
+      const url = `${BASE_URL}/${service}/${path}?${orderParams}`;
 
       return fetch(url, options)
         .then(response => response.json())
